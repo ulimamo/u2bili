@@ -1,8 +1,9 @@
 on:
   youtube:
     channel_id:
-      - UCoLQZ4ZClFqVPCvvjuiUSRA #boki
-      - UCjsiAm35towfnFs9ixpjqmw #Fireship
+      - UCoLQZ4ZClFqVPCvvjuiUSRA # boki
+      - UCjsiAm35towfnFs9ixpjqmw # hagnachannel
+      - UCHJPlIINqj9q8G2TBDickPg # lovelymukbang1267
       # 找不到UC开头的ID? channel主页 ctrl+u ctrl+f 搜channel_id=
     config:
       filterScript: |
