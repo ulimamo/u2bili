@@ -45,6 +45,7 @@ function getCookies() {
 }
 
 async function main() {
+  const title = await translate(meta["title"])
   const browser = await browserCore.launch({
     headless: !showBrowser,
   })
@@ -70,7 +71,7 @@ async function main() {
       ],
     },
   })
-  context.addCookies(getCookies())
+  await context.addCookies(getCookies())
   const page = await context.newPage()
   try {
     await Promise.all([
@@ -130,9 +131,9 @@ async function main() {
 
   // 视频描述
   await page.click("div.ql-editor[data-placeholder^=填写更全]")
-  await page.keyboard.type(`u2bili自动上传\n${meta["description"]}`)
+  // await page.keyboard.type(`u2bili自动上传\n${meta["description"].slice(0, 200)}`)
 
-  await page.fill("input[placeholder*=标题]", meta["title"])
+  await page.fill("input[placeholder*=标题]", 'Boki x ' + title)
 
   await uploadSubtitles(page, meta)
 
@@ -196,7 +197,7 @@ async function uploadSubtitles(page, meta) {
   // 寻找中文字幕和英文字幕
   const langCodes = Object.keys(meta["subtitles"])
   const enSub = langCodes.find((code) => code.startsWith("en"))
-  const zhSub = langCodes.find((code) => code.startsWith("zh-Hans"))
+  const zhSub = langCodes.find((code) => code.startsWith("zh-Hans") || code.startsWith("zh"))
 
   if (!enSub && !zhSub) return
 
@@ -238,6 +239,21 @@ async function uploadSubtitles(page, meta) {
   await page
     .click('text="取消"', { timeout: 1000, delay: 1000 })
     .catch(() => {})
+}
+
+async function translate(sourceText) {
+  const browser = await browserCore.launch({
+    headless: !showBrowser,
+  })
+  const context = await browser.newContext();
+  const page = await context.newPage()
+  await page.goto('http://www.iciba.com/translate');
+  await page.locator('div').filter({ hasText: /^自动选择语言 重点词汇整理文本0\/3000$/ }).locator('div').nth(1).click();
+  await page.locator('div').filter({ hasText: /^自动选择语言 重点词汇整理文本0\/3000$/ }).locator('div').nth(1).fill(sourceText);
+  let text = await page.getByRole('paragraph').textContent({timeout: 5000});
+  page.close();
+  browser.close();
+  return text;
 }
 
 main()
