@@ -1,6 +1,7 @@
 import { bilibiliCookies, showBrowser, downloadPath } from "./config.js"
 import { firefox as browserCore } from "playwright"
 import { existsSync, readFileSync, writeFileSync } from "fs"
+import { sendMail } from './mail.js'
 /**
  * 使用例 node upload.sh MetaFile [VideoFile]
  * MetaFile 是必须的
@@ -170,6 +171,16 @@ async function main() {
   await page.close()
   await context.close()
   await browser.close()
+
+  // 上传成功后邮件通知
+  await sendMail({
+    subject: `youtube视频更新 ${title}`,
+    content: [
+      `标题: ${meta["title"]}`,
+      `链接：${meta["webpage_url"]}`,
+      `频道：${meta["channel"]}`,
+    ].join('\n')
+  })
 }
 
 async function vtt2srt(path) {
