@@ -197,7 +197,7 @@ function vtt2srt(path) {
       rt
       .pipe(parse())
       // 和u2bili.sh中ffmpeg设置的【ss】对应，当前为裁剪前3秒
-      .pipe(resync(-3000))
+      .pipe(resync(-8000))
       .pipe(stringify({ format: 'SRT' }))
       .pipe(wt)
       wt.on('finish', resolve);
