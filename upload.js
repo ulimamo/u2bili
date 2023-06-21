@@ -181,6 +181,7 @@ async function main() {
       `标题: ${meta["title"]}`,
       `链接：${meta["webpage_url"]}`,
       `频道：${meta["channel"]}`,
+      `账号：${process.env.BILI_UP}`
     ].join('\n')
   })
 }

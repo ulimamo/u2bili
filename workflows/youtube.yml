@@ -35,6 +35,7 @@ jobs:
           MAIL_ACCOUNT: ${{ secrets.MAIL_ACCOUNT }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           SEND_TO_MAIL: ${{ secrets.SEND_TO_MAIL }}
+          BILI_UP: boki
         run: |
           chmod +x ./u2bili.sh && ./u2bili.sh "${link}"
       # - name: upload Fail video if failure
