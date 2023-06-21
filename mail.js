@@ -4,6 +4,7 @@ dotenv.config()
 
 // async..await is not allowed in global scope, must use a wrapper
 export async function sendMail(sendInfo) {
+    if(!process.env.MAIL_ACCOUNT) return console.error('未配置邮件');
     let transporter = nodemailer.createTransport({
         host: 'smtp.163.com',
         secure: true, // true for 465, false for other ports

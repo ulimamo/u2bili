@@ -21,4 +21,7 @@ if [ "$duration" -ge 1800 ]; then
 fi
 
 set -x # Show following commands
-yt-dlp "$yturl" --quiet --write-subs --all-subs --embed-subs --write-thumbnail -o "${downloadPath}%(id)s.%(ext)s" --exec "node upload.js ${downloadPath}$vid.json"
+yt-dlp "$yturl" --quiet --write-subs --all-subs --embed-subs --write-thumbnail --merge-output-format "mp4" -o "${downloadPath}%(id)s.%(ext)s"
+mv "${downloadPath}$vid.mp4" "${downloadPath}$vid.back.mp4"
+ffmpeg -i "${downloadPath}$vid.back.mp4" -ss 00:00:05 -vcodec copy -acodec copy "${downloadPath}$vid.mp4"
+node upload.js "${downloadPath}$vid.json"
