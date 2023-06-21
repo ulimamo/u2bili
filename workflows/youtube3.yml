@@ -1,7 +1,7 @@
 on:
   youtube:
     channel_id:
-      - UCDqdV11jLSI5kKTbu5LlUEQ # sio
+      # - UCDqdV11jLSI5kKTbu5LlUEQ # sio
       - UCRtoqRleHkDQRVgN9OwV6TA # sio
       # 找不到UC开头的ID? channel主页 ctrl+u ctrl+f 搜channel_id=
     config:
