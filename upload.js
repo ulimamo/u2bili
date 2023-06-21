@@ -1,7 +1,9 @@
 import { bilibiliCookies, showBrowser, downloadPath } from "./config.js"
 import { firefox as browserCore } from "playwright"
-import { existsSync, readFileSync, writeFileSync } from "fs"
+import { existsSync, readFileSync, writeFileSync, renameSync, createReadStream, createWriteStream } from "fs"
 import { sendMail } from './mail.js'
+import { parse, resync, stringify } from 'subtitle'
+
 /**
  * 使用例 node upload.sh MetaFile [VideoFile]
  * MetaFile 是必须的
@@ -183,25 +185,41 @@ async function main() {
   })
 }
 
-async function vtt2srt(path) {
-  if (!existsSync(path)) return
+function vtt2srt(path) {
+  if (!existsSync(path)) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    try {
+      const backPath = path + '.bak';
+      renameSync(path, backPath)
+      const rt = createReadStream(backPath)
+      const wt = createWriteStream(path)
+      rt
+      .pipe(parse())
+      // 和u2bili.sh中ffmpeg设置的【ss】对应，当前为裁剪前3秒
+      .pipe(resync(-3000))
+      .pipe(stringify({ format: 'SRT' }))
+      .pipe(wt)
+      wt.on('finish', resolve);
+    } catch(err) {
+      reject(err);
+    }
+  })
+  // let num = 1
+  // const vtt = readFileSync(path, "utf-8")
+  // // 去除头部meta信息，改为逗号分割，增加序号，空行修整
+  // let srt = vtt
+  //   .split("\n")
+  //   .slice(4)
+  //   .join("\n")
+  //   .replace(
+  //     /(\d{2}:\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}:\d{2}.\d{3})/g,
+  //     (match, p1) => {
+  //       return `${num++}\n${p1.replaceAll(".", ",")}`
+  //     }
+  //   )
+  //   .replace(/\n+$/g, "")
 
-  let num = 1
-  const vtt = readFileSync(path, "utf-8")
-  // 去除头部meta信息，改为逗号分割，增加序号，空行修整
-  let srt = vtt
-    .split("\n")
-    .slice(4)
-    .join("\n")
-    .replace(
-      /(\d{2}:\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}:\d{2}.\d{3})/g,
-      (match, p1) => {
-        return `${num++}\n${p1.replaceAll(".", ",")}`
-      }
-    )
-    .replace(/\n+$/g, "")
-
-  writeFileSync(path, srt)
+  // writeFileSync(path, srt)
 }
 
 async function uploadSubtitles(page, meta) {
@@ -232,14 +250,14 @@ async function uploadSubtitles(page, meta) {
 
   if (zhSub) {
     const subPath = `${downloadPath}${meta["id"]}.${zhSub}.vtt`
-    vtt2srt(subPath)
+    await vtt2srt(subPath)
     await selectSub("中文", subPath)
     console.log("已添加中文字幕")
   }
 
   if (enSub) {
     const subPath = `${downloadPath}${meta["id"]}.${enSub}.vtt`
-    vtt2srt(subPath)
+    await vtt2srt(subPath)
     await selectSub("英语", subPath)
     console.log("已添加英文字幕")
   }

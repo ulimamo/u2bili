@@ -11,6 +11,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "nodemailer": "^6.9.3",
-    "playwright": "1.35.1"
+    "playwright": "1.35.1",
+    "subtitle": "^4.2.1"
   }
 }
