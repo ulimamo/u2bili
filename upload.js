@@ -161,7 +161,7 @@ async function main() {
 
   await page
     .waitForSelector('text="上传完成"', {
-      timeout: 10 * 60_000, // 等待上传完毕
+      timeout: 25 * 60_000, // 等待上传完毕
     })
     .catch(() => {
       console.log("上传时间过长")
