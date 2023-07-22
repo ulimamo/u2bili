@@ -1,46 +1,46 @@
-on:
-  youtube:
-    channel_id:
-      # - UCDqdV11jLSI5kKTbu5LlUEQ # sio
-      - UCRtoqRleHkDQRVgN9OwV6TA # sio
-      # 找不到UC开头的ID? channel主页 ctrl+u ctrl+f 搜channel_id=
-    config:
-      filterScript: |
-        return new Date() - 24 * 3600 * 1000 < new Date(item.pubDate) //Recent 24 hours Only
-jobs:
-  print:
-    name: U2bili workflow2
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup headless environment
-        run: |
-          node -v
-          apt-get update >> apt.log
-          apt-get install -qqy wget ffmpeg python3 >> apt.log
-          npm i --silent
-          # Install Chromium dependency
-          apt-get install -qq 'fonts-liberation' 'libasound2' 'libatk-bridge2.0-0' 'libatk1.0-0' 'libatspi2.0-0' 'libcairo2' 'libcups2' 'libdbus-1-3' 'libdrm2' 'libgbm1' 'libgdk-pixbuf2.0-0' 'libglib2.0-0' 'libgtk-3-0' 'libnspr4' 'libnss3' 'libpango-1.0-0' 'libpangocairo-1.0-0' 'libx11-6' 'libx11-xcb1' 'libxcb-dri3-0' 'libxcb1' 'libxcomposite1' 'libxdamage1' 'libxext6' 'libxfixes3' 'libxi6' 'libxrandr2' 'libxtst6' >> apt.log
-          # Install FireFox dependency
-          apt-get install -qq 'libatk1.0-0' 'libcairo-gobject2' 'libcairo2' 'libdbus-1-3' 'libdbus-glib-1-2' 'libfontconfig1' 'libfreetype6' 'libglib2.0-0' 'libgtk-3-0' 'libgtk2.0-0' 'libharfbuzz0b' 'libpango-1.0-0' 'libpangocairo-1.0-0' 'libpangoft2-1.0-0' 'libx11-6' 'libx11-xcb1' 'libxcb-shm0' 'libxcb1' 'libxcomposite1' 'libxcursor1' 'libxdamage1' 'libxext6' 'libxfixes3' 'libxi6' 'libxrender1' 'libxt6' >> apt.log
-          # Install latest yt-dlp
-          curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
-          chmod a+rx /usr/local/bin/yt-dlp
-      - name: u2bili
-        timeout-minutes: 50
-        env:
-          link: ${{on.youtube.outputs.link}}
-          BILIBILI_COOKIE: ${{ secrets.BILIBILI_COOKIE3 }}
-          MAIL_ACCOUNT: ${{ secrets.MAIL_ACCOUNT }}
-          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-          SEND_TO_MAIL: ${{ secrets.SEND_TO_MAIL }}
-          BILI_UP: 老k
-        run: |
-          chmod +x ./u2bili.sh && ./u2bili.sh "${link}"
-      # - name: upload Fail video if failure
-      #   uses: actions/upload-artifact@v3
-      #   if: failure()
-      #   with:
-      #     name: video record
-      #     path: |
-      #       videos/
+# on:
+#   youtube:
+#     channel_id:
+#       # - UCDqdV11jLSI5kKTbu5LlUEQ # sio
+#       - UCRtoqRleHkDQRVgN9OwV6TA # sio
+#       # 找不到UC开头的ID? channel主页 ctrl+u ctrl+f 搜channel_id=
+#     config:
+#       filterScript: |
+#         return new Date() - 24 * 3600 * 1000 < new Date(item.pubDate) //Recent 24 hours Only
+# jobs:
+#   print:
+#     name: U2bili workflow2
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Setup headless environment
+#         run: |
+#           node -v
+#           apt-get update >> apt.log
+#           apt-get install -qqy wget ffmpeg python3 >> apt.log
+#           npm i --silent
+#           # Install Chromium dependency
+#           apt-get install -qq 'fonts-liberation' 'libasound2' 'libatk-bridge2.0-0' 'libatk1.0-0' 'libatspi2.0-0' 'libcairo2' 'libcups2' 'libdbus-1-3' 'libdrm2' 'libgbm1' 'libgdk-pixbuf2.0-0' 'libglib2.0-0' 'libgtk-3-0' 'libnspr4' 'libnss3' 'libpango-1.0-0' 'libpangocairo-1.0-0' 'libx11-6' 'libx11-xcb1' 'libxcb-dri3-0' 'libxcb1' 'libxcomposite1' 'libxdamage1' 'libxext6' 'libxfixes3' 'libxi6' 'libxrandr2' 'libxtst6' >> apt.log
+#           # Install FireFox dependency
+#           apt-get install -qq 'libatk1.0-0' 'libcairo-gobject2' 'libcairo2' 'libdbus-1-3' 'libdbus-glib-1-2' 'libfontconfig1' 'libfreetype6' 'libglib2.0-0' 'libgtk-3-0' 'libgtk2.0-0' 'libharfbuzz0b' 'libpango-1.0-0' 'libpangocairo-1.0-0' 'libpangoft2-1.0-0' 'libx11-6' 'libx11-xcb1' 'libxcb-shm0' 'libxcb1' 'libxcomposite1' 'libxcursor1' 'libxdamage1' 'libxext6' 'libxfixes3' 'libxi6' 'libxrender1' 'libxt6' >> apt.log
+#           # Install latest yt-dlp
+#           curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+#           chmod a+rx /usr/local/bin/yt-dlp
+#       - name: u2bili
+#         timeout-minutes: 50
+#         env:
+#           link: ${{on.youtube.outputs.link}}
+#           BILIBILI_COOKIE: ${{ secrets.BILIBILI_COOKIE3 }}
+#           MAIL_ACCOUNT: ${{ secrets.MAIL_ACCOUNT }}
+#           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+#           SEND_TO_MAIL: ${{ secrets.SEND_TO_MAIL }}
+#           BILI_UP: 老k
+#         run: |
+#           chmod +x ./u2bili.sh && ./u2bili.sh "${link}"
+#       # - name: upload Fail video if failure
+#       #   uses: actions/upload-artifact@v3
+#       #   if: failure()
+#       #   with:
+#       #     name: video record
+#       #     path: |
+#       #       videos/
