@@ -2,7 +2,8 @@ import { bilibiliCookies, showBrowser, downloadPath } from "./config.js"
 import { firefox as browserCore } from "playwright"
 import { existsSync, readFileSync, writeFileSync, renameSync, createReadStream, createWriteStream } from "fs"
 import { sendMail } from './mail.js'
-import { parse, resync, stringify } from 'subtitle'
+import { parse, resync, stringify } from 'subtitle';
+import { translate } from './translate.js'
 
 /**
  * 使用例 node upload.sh MetaFile [VideoFile]
@@ -269,21 +270,6 @@ async function uploadSubtitles(page, meta) {
   await page
     .click('text="取消"', { timeout: 1000, delay: 1000 })
     .catch(() => {})
-}
-
-async function translate(sourceText) {
-  const browser = await browserCore.launch({
-    headless: !showBrowser,
-  })
-  const context = await browser.newContext();
-  const page = await context.newPage()
-  await page.goto('http://www.iciba.com/translate');
-  await page.locator('div').filter({ hasText: /^自动选择语言 重点词汇整理文本0\/3000$/ }).locator('div').nth(1).click();
-  await page.locator('div').filter({ hasText: /^自动选择语言 重点词汇整理文本0\/3000$/ }).locator('div').nth(1).fill(sourceText);
-  let text = await page.getByRole('paragraph').textContent({timeout: 5000});
-  page.close();
-  browser.close();
-  return text;
 }
 
 main()
